@@ -1,0 +1,6 @@
+use spotify
+
+// Basic findOne - useful to have a look at the schema.
+// Can project fields .
+db.track.findOne({ "track_number" : 10 }, { "album" : 0, "artists" : 0, "available_markets" : 0 })
+db.track.find({ "name" : "Some Girls Are Bigger Than Others - 2011 Remastered Version" }, { })
