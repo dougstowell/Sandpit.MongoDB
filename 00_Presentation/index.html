@@ -53,11 +53,10 @@
 					<ol>
 						<li>Introduction</li>
 						<li>CRUD</li>
-						<li>Schema Design</li>
+						<li>Schema</li>
 						<li>Performance</li>
 						<li>Aggregation</li>
 						<li>Sharding</li>
-						<li>Mongoose</li>
 					</ol>
 				</section>
 
@@ -66,106 +65,254 @@
 						<h2>Introduction</h2>
 						<pre><code data-trim>
 {
-	"_id": ObjectId("TODO"),
+	"_id": ObjectId("51e4524ef3651c651a42331c"),
 	"title" : {
 		"Heading": "Introduction",
-		"Sub-Heading": "Why not relational?"
+		"Sub-Heading": "Where is my 3NF?"
 	},
 	"tags": ["SQL", "NoSQL", "Should we care?"],
 	"author": "D Stowell"
 }
 						</code></pre>
 					</section>
+					
 					<section>
 						<h2>Who are they?</h2>
 						<ol>
-							<li>2007 formed 10gen</li>
-							<li>2013 became MongoDB<li>
+							<li>10gen</li>
+							<li>MongoDB</li>
 							<li>15 offices</li>
 							<li>$311M investment</li>
 							<li>$1.2B valuation</li>
-						</ol>
+						</ol>	
+						<p><a href="https://www.mongodb.com/events/mongodb-days-uk">Events</a></p>																
 					</section>
+					
 					<section>
 						<h2>Who is using it?</h2>
 						<ol>
 							<li>Expedia</li>
-							<li>OTTO<li>
+							<li>OTTO</li>
 							<li>Bosch</li>
 							<li>Forbes</li>
+							<li>Now TV</li>
 							<li>The Weather Channel</li>
 						</ol>
 					</section>
+							
+					<section>
+						<h2>Why are they using it?</h2>
+						<ol>
+							<li>OSS (GitHub)</li>
+							<li>Language support</li>
+							<li>It's not relational</li>
+							<li>Load balancing</li>
+							<li>Performance</li>
+							<li>Replication</li>							
+						</ol>						
+					</section>
+														
 					<section>
 						<h2>Installing</h2>
 						<a href="https://www.mongodb.org/downloads">Download</a>
 						<pre><code data-trim>
 "C:\Program Files\MongoDB\Server\3.0\bin\mongod.exe" --service --config="C:\Program Files\MongoDB\Server\3.0\bin\mongod.cfg
 						</code></pre>
+						<p><a href="http://robomongo.org/">Robomongo</a></p>
+						<p><a href="http://3t.io/mongochef/">Mongochef</a></p>						
 					</section>
 					<section>
 						<h2>The Mongo Shell</h2>
+						<p>Javascript v8 interpreter</p>
+						<pre><code>mongo
+
+help
+
+show dbs
+use my-new-db
+db
+
+db.things.findOne()
+
+db.things.insert({ "a": 1, "b": 2, "f": 99})
+
+db.things.find().pretty()
+
+for (i = 0; i <= 10; i++) { db.things.insert({ "x": i}) }
+db.things.find()
+
+db.things.drop()
+db.dropDatabase()
+						</code></pre>						
 					</section>
 					<section>
 						<h2>JSON / B(J)SON</h2>
+						<ol>
+							<li>Arrays</li>
+							<li>Dictionary</li>
+							<li>Nesting</li>
+							<li>Where is my 3NF?</li>
+							<li>Superset of JSON - more types</li>						
+						</ol>							
 					</section>
 				</section>
 
 				<section data-background="#2f87af">
 					<section>
 						<h2>CRUD</h2>
-						<p>Working with your data</p>
-					</section>
-					<section>
-						<h2>CREATE</h2>
-						<pre><code data-trim contenteditable>
-	function linkify( selector ) {
-	  if( supports3DTransforms ) {
-
-	    var nodes = document.querySelectorAll( selector );
-
-	    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-	      var node = nodes[i];
-
-	      if( !node.className ) {
-	        node.className += ' roll';
-	      }
-	    }
-	  }
-	}
+						<pre><code data-trim>
+{
+	"_id": ObjectId("51e4524gh3651c771a42331c"),
+	"title" : {
+		"Heading": "CRUD",
+		"Sub-Heading": "Working with your data"
+	},
+	"tags": ["CREATE", "READ", "UPDATE", "DELETE"],
+	"author": "D Stowell"
+}
 						</code></pre>
 					</section>
+					
 					<section>
-						<h2>READ</h2>
+						<h2>CREATE: insert({ ... })</h2>
+						<ol>
+							<li>_id is the PK</li>
+							<li>ObjectId is like a GUID</li>
+							<li>Use your own _id</li>						
+						</ol>	
+						<pre><code>mongo
+
+use my-new-db
+
+doc = { "name": "Joe", "age": 30, "profession": "Technical Specialist" }
+
+db.things.insert(doc)
+db.things.insert({ "_id": 99, "name": "Fred", "age": 26, "office": "Beeston" })
+db.things.insert({ "_id": 99, "name": "Freddie", "age": 32, "profession": "GDE" })
+
+db.find()
+						</code></pre>												
 					</section>
 					<section>
-						<h2>UPDATE</h2>
+						<h2>READ: find({ ... })</h2>
+						<pre><code>use spotify
+
+db.track.find()
+db.track.find({ "disc_number" : 1, "track_number": 19 })
+db.track.findOne({ "track_number" : 10 }, { "album" : 0, "artists" : 0, "available_markets" : 0 })
+
+db.track.find({ "disc_number" : 1, "track_number": 1, "popularity": { $gt: 50 } })
+db.track.find({ "duration_ms": { $gte: 110000, $lte: 120000 } }, { "artists" : 1 })
+
+db.track.find( { $or: [ { "name": { $regex: "^Gertcha" } }, { "popularity": { $gt: 90 } } ] } )
+db.track.find( { "available_markets" : "UY" } )
+db.track.find( { "name": { $regex: "^Sideboard" }, "available_markets": { $all: [ "NZ", "IS", "UY" ] } } )
+db.track.find( { "available_markets": { $in: [ "NZ", "IS" ] } } )
+
+db.track.find( { "album.name": "Mustn't Grumble" }, { "album" : 0, "available_markets" : 0, "album.available_markets" : 0 } )
+
+db.track.count( { "available_markets" : "UY" } )
+						</code></pre>							
 					</section>
 					<section>
-						<h2>DELETE</h2>
+						<h2>UPDATE: update({ ... })</h2>
+						<ol>
+							<li>Wholesale</li>
+							<li>Fields</li>
+							<li>Upsert</li>
+							<li>Multi (no atomicity)</li>						
+						</ol>	
+						<pre><code>use test
+
+for (i = 0; i <= 10; i++) { db.things.insert({ "_id": i, "x": 14 * i, "y": 4 * i }) }
+
+db.things.update({ "_id" : 7 }, { "x" : 71, "z" : 99 })
+
+db.things.update({ "_id" : 9 }, { $set: { "x" : 71, "z" : 99 } })
+db.things.update({ "_id" : 9 }, { $inc: { "x" : 900 } })
+db.things.update({ "_id" : 1 }, { $unset: { "x" : 1 } })
+
+db.things.update({ "_id" : 99 }, { $set: { "x" : 75, "z" : 999 } }, { "upsert": true })
+db.things.update({ }, { $set: { "foo" : 475 } }, { "multi": true })
+
+db.things.drop()
+						</code></pre>		
 					</section>
+					<section>
+						<h2>DELETE: remove({ ... })</h2>
+						<p>As with update, no atomicity on multi deletes</p>
+						<pre><code>use test
+
+for (i = 0; i <= 10; i++) { db.things.insert({ "_id": i, "x": 14 * i, "y": 4 * i }) }
+
+db.things.remove({ "_id" : { $gt: 7 } })
+db.things.find()
+
+db.things.remove()
+db.things.remove({ })
+
+db.things.drop()
+						</code></pre>	
+					</section>					
 				</section>
 
 				<section data-background="#2f87af">
 					<section>
 						<h2>Schema Design</h2>
-						<p>Surviving in the wild wild west</p>
+						<pre><code data-trim>
+{
+	"_id": ObjectId("5199524gh3651c7c1a4x331c"),
+	"title" : {
+		"Heading": "Schema Design",
+		"Sub-Heading": "Working with your data"
+	},
+	"tags": ["Wild", "Wild", "West"],
+	"author": "D Stowell"
+}
+						</code></pre>
 					</section>
 					<section>
 						<h2>Who moved my constraints?</h2>
+						<ol>
+							<li>No FK</li>
+							<li>No guarantee with references</li>
+							<li>Time to embed</li>					
+						</ol>						
 					</section>
 					<section>
 						<h2>Who moved my transactions?</h2>
+						<ol>
+							<li>Atomic operations at doc level</li>
+							<li>Time to embed</li>		
+							<li>Implement in your app</li>
+							<li>Put up with it</li>	
+						</ol>						
 					</section>
 					<section>
 						<h2>How to implement relations</h2>
-					</section>
+						<ol>
+							<li>1:1 Embed but which one?</li>
+							<li>1:m True linking (2 coll with _id)</li>
+							<li>1:f 1 coll and array</li>		
+							<li>m:n Array in one or both coll</li>
+						</ol>	
+					</section>					
 				</section>
 
 				<section data-background="#2f87af">
 					<section>
 						<h2>Performance</h2>
-						<p>Indexes and monitoring</p>
+						<pre><code data-trim>
+{
+	"_id": ObjectId("2AwjZXoQ2jewWjcB5L0E"),
+	"title" : {
+		"Heading": "Performance",
+		"Sub-Heading": "Indexes and Monitoring"
+	},
+	"tags": ["Wild Tiger", "Explain"],
+	"author": "D Stowell"
+}
+						</code></pre>
 					</section>
 					<section>
 						<h2>Storage Engines</h2>
@@ -184,7 +331,17 @@
 				<section data-background="#2f87af">
 					<section>
 						<h2>Aggregation</h2>
-						<p>But how do I GROUP BY?</p>
+						<pre><code data-trim>
+{
+	"_id": ObjectId("55e4a6649afb13b9153156d0E"),
+	"title" : {
+		"Heading": "Aggregation",
+		"Sub-Heading": "How do I GROUP BY"
+	},
+	"tags": ["Pipeline", "Operators"],
+	"author": "D Stowell"
+}
+						</code></pre>
 					</section>
 					<section>
 						<h2>The Aggregation Pipeline</h2>
@@ -206,16 +363,23 @@
 				<section data-background="#2f87af">
 					<section>
 						<h2>Sharding</h2>
-						<p>Scale out</p>
+						<pre><code data-trim>
+{
+	"_id": ObjectId("55e4a6649afb13b9153156d0E"),
+	"title" : {
+		"Heading": "Sharding",
+		"Sub-Heading": "Scale out"
+	},
+	"tags": ["Partition", "Operators"],
+	"author": "D Stowell"
+}
+						</code></pre>
 					</section>
 					<section>
-						<h2>Who moved my constraints?</h2>
+						<h2>TODO:</h2>
 					</section>
 					<section>
-						<h2>Who moved my transactions?</h2>
-					</section>
-					<section>
-						<h2>How to implement relations</h2>
+						<h2>TODO:</h2>
 					</section>
 				</section>
 

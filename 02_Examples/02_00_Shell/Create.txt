@@ -1,0 +1,22 @@
+mongo
+
+help
+
+show dbs
+use my-new-db
+db
+
+db.things.findOne()
+
+db.things.insert({ "a": 1, "b": 2, "c": 3})
+db.things.insert({ "d": 4, "e", 5})
+db.things.insert({ "d": 4, "e": 5, "f": 99})
+
+db.things.find()
+db.things.find({ "f": 99 }).pretty()
+
+for (i = 0; i <= 10; i++) { db.things.insert({ "x": i}) }
+db.things.find()
+
+db.things.drop()
+db.dropDatabase()

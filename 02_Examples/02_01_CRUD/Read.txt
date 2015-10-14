@@ -1,6 +1,24 @@
+mongo
+
 use spotify
 
-// Basic findOne - useful to have a look at the schema.
-// Can project fields .
+db.track.find().pretty()
+db.track.find({ "name" : "Some Girls Are Bigger Than Others - 2011 Remastered Version" })
+db.track.find({ "disc_number" : 1, "track_number": 19 })
 db.track.findOne({ "track_number" : 10 }, { "album" : 0, "artists" : 0, "available_markets" : 0 })
-db.track.find({ "name" : "Some Girls Are Bigger Than Others - 2011 Remastered Version" }, { })
+
+db.track.find({ "disc_number" : 1, "track_number": 1, "popularity": { $gt: 50 } })
+db.track.find({ "duration_ms": { $gte: 110000, $lte: 120000 } }, { "artists" : 1 })
+
+db.track.find( { $or: [ { "name": { $regex: "^Gertcha" } }, { "popularity": { $gt: 90 } } ] } )
+db.track.find( { "available_markets" : "UY" } )
+db.track.find( { "name": { $regex: "^Sideboard" }, "available_markets": { $all: [ "NZ", "IS", "UY" ] } } )
+db.track.find( { "available_markets": { $in: [ "NZ", "IS" ] } } )
+
+db.track.find( { "album.name": "Mustn't Grumble" }, { "album" : 0, "available_markets" : 0, "album.available_markets" : 0 } )
+
+cur = db.track.find({ "disc_number" : 1, "track_number": 19 })
+cur.next()
+cur.hasNext()
+
+db.track.count( { "available_markets" : "UY" } )

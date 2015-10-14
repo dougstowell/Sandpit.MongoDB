@@ -1,6 +1,21 @@
-use spotify
+use test
 
-// Basic findOne - useful to have a look at the schema.
-// Can project fields .
-db.track.findOne({ "track_number" : 10 }, { "album" : 0, "artists" : 0, "available_markets" : 0 })
-db.track.find({ "name" : "Some Girls Are Bigger Than Others - 2011 Remastered Version" }, { })
+for (i = 0; i <= 10; i++) { db.things.insert({ "_id": i, "x": 14 * i, "y": 4 * i }) }
+db.things.find()
+
+db.things.update({ "_id" : 7 }, { "x" : 71, "z" : 99 })
+db.things.find()
+
+db.things.update({ "_id" : 9 }, { $set: { "x" : 71, "z" : 99 } })
+db.things.find()
+db.things.update({ "_id" : 9 }, { $inc: { "x" : 900 } })
+db.things.find()
+db.things.update({ "_id" : 1 }, { $unset: { "x" : 1 } })
+db.things.find()
+
+db.things.update({ "_id" : 99 }, { $set: { "x" : 75, "z" : 999 } }, { "upsert": true })
+db.things.find()
+db.things.update({ }, { $set: { "foo" : 475 } }, { "multi": true })
+db.things.find()
+
+db.things.drop()
