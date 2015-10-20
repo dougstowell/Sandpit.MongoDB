@@ -76,6 +76,10 @@
 						</code></pre>
 					</section>
 					
+					<section data-background="./img/mongou-m101js.png">
+						
+					</section>					
+					
 					<section>
 						<h2>Who are they?</h2>
 						<ol>
@@ -87,6 +91,12 @@
 						</ol>	
 						<p><a href="https://www.mongodb.com/events/mongodb-days-uk">Events</a></p>																
 					</section>
+					
+					<section data-background="#2f87af">
+						<img src="./img/DBEnginesRankingTop10.png" />
+						<img src="./img/DBEnginesRankingIngres.png" />
+						<p><a href="http://db-engines.com/en/ranking">DB Engine</a></p>																											
+					</section>	
 					
 					<section>
 						<h2>Who is using it?</h2>
@@ -315,17 +325,121 @@ db.things.drop()
 						</code></pre>
 					</section>
 					<section>
-						<h2>Storage Engines</h2>
+						<h2>Storage Engines - MMAPv1</h2>
+						<ol>
+							<li>Default</li>
+							<li>OS driven</li>
+							<li>Collection level concurrency</li>			
+							<li>Multi reader, single writer</li>
+						</ol>						
 					</section>
+					<section>
+						<h2>Storage Engines - Wired Tiger</h2>
+						<ol>
+							<li>Acquired (BerkeleyDB)</li>
+							<li>MongoDB 3.0</li>
+							<li>Document level concurrency</li>		
+							<li>Compression</li>
+							<li>Not OS driven</li>
+						</ol>					
+						<pre><code data-trim>
+mongod ... --storageEngine wiredTiger
+						</code></pre>				
+					</section>
+										
 					<section>
 						<h2>Indexes</h2>
+						<pre><code>use students
+
+db.students.createIndex({ "name" : 1 })
+db.students.getIndexes()
+db.students.explain().find({ "name": "Bao Ziglar" })
+db.students.stats()
+db.students.dropIndex({ "name" : 1 })
+
+db.students.createIndex({ "scores.score" : 1 })
+db.students.explain().find({ "scores.score": { "$gt": 99 } })
+db.students.dropIndex({ "scores.score" : 1 })
+						</code></pre>	
+					</section>							
+
+					<section>
+						<h2>Multi-Key Indexes</h2>
+						<ol>
+							<li>Index on array</li>
+							<li>No compound index on more than one array</li>
+							<li>Multi key if array introduced</li>		
+							<li>Can't insert doc if two arrays</li>
+						</ol>
 					</section>
+
+					<section>
+						<h2>Index Options</h2>
+						<pre><code>use students
+
+db.students.createIndex({ "name" : 1 }, { "unique": true})
+db.students.createIndex({ "foo" : 1 }, { "sparse": true})
+db.students.createIndex({ "bar" : 1 }, { "background": true})
+db.students.createIndex({ "essay" : "text" })
+						</code></pre>	
+					</section>
+					
 					<section>
 						<h2>Explain</h2>
+						<ol>
+							<li>Simulates execution</li>
+							<li>Explainable object</li>
+							<li>All except insert()</li>							
+						</ol>	
+						<pre><code>use students
+
+db.students.createIndex({ "name" : 1 })
+var exp = db.students.explain()
+exp.help()
+exp.find({ "name": "Tressa Schwing" })
+db.students.dropIndex({ "name" : 1 })
+
+db.students.explain("executionStats").find()
+db.students.explain("allPlansExecution").find()
+						</code></pre>												
 					</section>
+
+					<section>
+						<h2>Covered Index</h2>
+						<ol>
+							<li>Entirely from index</li>
+							<li>Fast</li>
+							<li>totalDocsExamined = 0</li>
+							<li>Index in memory (Wired Tiger)</li>															
+						</ol>						
+					</section>					
+					
 					<section>
 						<h2>Logging and Profiling</h2>
+						<ol>
+							<li>Logs > 100ms</li>
+							<li>0 - no profiling</li>
+							<li>1 - slow</li>
+							<li>2 - all</li>														
+						</ol>	
+						<pre><code data-trim>
+mongod ... --profile 1 --slowms 50
+						</code></pre>	
+						<pre><code data-trim>
+db.getProfilingLevel()
+db.getProfilingStatus()
+db.setProfilingLevel(1, 400)
+db.setProfilingLevel(0)
+						</code></pre>						
 					</section>
+					
+					<section>
+						<h2>Logging and Profiling</h2>
+						<ol>
+							<li>mongotop</li>
+							<li>mongostat</li>														
+						</ol>						
+					</section>					
 				</section>
 
 				<section data-background="#2f87af">
